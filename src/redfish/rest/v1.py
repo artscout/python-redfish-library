@@ -862,6 +862,10 @@ class RestClientBase(object):
         cause_exception = None
         while attempts <= self._max_retry:
             if LOGGER.isEnabledFor(logging.DEBUG):
+                headerstr = ''
+                if headers is not None:
+                    for header in headers:
+                        headerstr += '\t{}: {}\n'.format(header, headers[header])
                 try:
                     logbody = None
                     if restreq.body:
@@ -869,11 +873,11 @@ class RestClientBase(object):
                             logbody = restreq.body
                         else:
                             raise ValueError('Body of message is binary')
-                    LOGGER.debug('HTTP REQUEST: %s\n\tPATH: %s\n\tBODY: %s'% \
-                                    (restreq.method, restreq.path, logbody))
+                    LOGGER.debug('HTTP REQUEST (%s) for %s:\nHeaders:\n%s\nBody: %s'% \
+                                 (restreq.method, restreq.path, headerstr, logbody))
                 except:
-                    LOGGER.debug('HTTP REQUEST: %s\n\tPATH: %s\n\tBODY: %s'% \
-                                (restreq.method, restreq.path, 'binary body'))
+                    LOGGER.debug('HTTP REQUEST (%s) for %s:\nHeaders:\n%s\nBody: %s'% \
+                                 (restreq.method, restreq.path, headerstr, 'binary body'))
             attempts = attempts + 1
             LOGGER.info('Attempt %s of %s', attempts, path)
 
