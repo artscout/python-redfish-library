@@ -801,7 +801,8 @@ class RestClientBase(object):
 
         if body is not None:
             if isinstance(body, dict) or isinstance(body, list):
-                headers['Content-Type'] = 'application/json'
+                if headers.get('Content-Type') != "multipart/form-data":
+                    headers['Content-Type'] = 'application/json'
                 body = json.dumps(body)
             elif isinstance(body, bytes):
                 headers['Content-Type'] = 'application/octet-stream'
